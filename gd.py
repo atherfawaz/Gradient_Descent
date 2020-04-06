@@ -3,9 +3,13 @@ import pandas as pd
 import numpy as np
 import random
 
-
-def predict_classes():
-    dummy = None
+# GET Y-HAT
+def predict_classes(data, weight_vector):
+    for i in range(0, 150):
+        transposed_weights = np.transpose(weight_vector)
+        input_samples = data[i, :]
+        data[i][4] = transposed_weights.dot(input_samples)
+    return (data, weight_vector, changes)
 
 # MAIN FUNCTION
 if __name__ == "__main__":
@@ -38,5 +42,5 @@ if __name__ == "__main__":
     changes = True
     iterations = 0
     while(iterations <= 1000 and changes is True):
-        predict_classes()
+        (data, weight_vector) = predict_classes(data, weight_vector)
         iterations += 1
