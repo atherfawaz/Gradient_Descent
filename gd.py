@@ -62,21 +62,28 @@ if __name__ == "__main__":
     #weight_vector = weight_vector - training_rate * -1 * np.sum(data_training[:,5]-data_training[:,6]) * data_training[:,:5]
 
     changes = True
+    print("------- Performing training ----------")
     iterations = 0
+    prevCost = 0
     while(iterations <= 1000 and changes is True):
         (data_training, weight_vector) = predict_classes(data_training, weight_vector)
         cost = np.sum(np.abs(data_training[:,5]-data_training[:,6]))
+        if (cost - prevCost == 0):
+            changes = False
         for k in range(0,weight_vector[:,0].size):
             sumCalc = 0
             size_ = data_training[:,0].size
-            for i in range(0,data_training[:,0].size):
-                diff = np.subtract(data_training[i,5],data_training[i,6])
-                feature = data_training[i,k]
-                sumCalc += diff * feature
+            #for i in range(0,data_training[:,0].size):
+                #diff = np.subtract(data_training[i,5],data_training[i,6])
+                #feature = data_training[i,k]
+                #sumCalc += diff * feature
+            diff = np.subtract(data_training[:,5],data_training[:,6])
+            feature = data_training[:,k]
+            sumCalc = np.sum(diff*feature)
             weight_vector[k] = weight_vector[k] - (training_rate * -1/data_training[:,0].size * sumCalc)
         if (iterations%100==0):
             print(cost)
-        #print(weight_vector)
+        prevCost = cost
         iterations += 1
 
     mismatch_count = 0
@@ -86,5 +93,6 @@ if __name__ == "__main__":
             mismatch_count += 1
 
     test_cost = np.sum(np.abs(data_testing[:,5]-data_testing[:,6]))
+    print("\n------- Now performing testing ----------")
     print("Mismatch count is " + str(mismatch_count))
     print("Test cost is " + str(test_cost))
