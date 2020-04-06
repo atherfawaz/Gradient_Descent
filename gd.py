@@ -8,6 +8,7 @@ def predict_classes(data, weight_vector):
     for i in range(0, 150):
         transposed_weights = np.transpose(weight_vector)
         input_samples = data[i, : 5]
+        input_samples[4] = 1.0
         data[i][5] = transposed_weights.dot(input_samples)
     return (data, weight_vector)
 
