@@ -39,7 +39,7 @@ if __name__ == "__main__":
     data[:, 2] = petal_length
     data[:, 3] = petal_width
     data[:, 4] = flower_class
-    weight_vector = np.random.rand(5, 1)    # 4 wi for 3 features
+    weight_vector = np.random.rand(5, 1)
 
     changes = True
     iterations = 0
