@@ -7,9 +7,9 @@ import random
 def predict_classes(data, weight_vector):
     for i in range(0, 150):
         transposed_weights = np.transpose(weight_vector)
-        input_samples = data[i, :]
-        data[i][4] = transposed_weights.dot(input_samples)
-    return (data, weight_vector, changes)
+        input_samples = data[i, : 5]
+        data[i][5] = transposed_weights.dot(input_samples)
+    return (data, weight_vector)
 
 # MAIN FUNCTION
 if __name__ == "__main__":
@@ -32,11 +32,12 @@ if __name__ == "__main__":
             flower_class[idx] = 2
         idx += 1
 
-    data = np.random.rand(flower_class.size, 5)
-    data[:, 0] = sepal_width
-    data[:, 1] = sepal_length
-    data[:, 2] = petal_width
-    data[:, 3] = petal_length
+    data = np.random.rand(flower_class.size, 6)
+    data[:, 0] = sepal_length
+    data[:, 1] = sepal_width
+    data[:, 2] = petal_length
+    data[:, 3] = petal_width
+    data[:, 4] = flower_class
     weight_vector = np.random.rand(5, 1)    # 4 wi for 3 features
 
     changes = True
