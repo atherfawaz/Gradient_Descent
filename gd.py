@@ -12,14 +12,10 @@ def predict_classes(data, weight_vector,testing=False):
     #input_samples[4] = 1.0
     pred_array = np.transpose(transposed_weights.dot(input_samples))
     if (testing):
-        for i in range(0,data[:,0].size):
-            if pred_array[i]<=1.5:
-                pred_array[i] = 1
-            elif pred_array[i]>1.5 and pred_array[i]<=2.5:
-                pred_array[i] = 2
-            elif pred_array[i]>2.5:
-                pred_array[i] = 3        
-    data[:,6] = pred_array[:,0]
+        pred_array = [(1 if pred_array[i]<=1.5 else (2 if pred_array[i]>1.5 and pred_array[i]<=2.5 else 3)) for i in range(0,data[:,0].size)]
+        data[:,6] = pred_array[:]
+    else:      
+        data[:,6] = pred_array[:,0]
     return (data, weight_vector)
 
 # MAIN FUNCTION
@@ -51,8 +47,8 @@ if __name__ == "__main__":
     data[:, 4] = petal_width
     data[:, 5] = flower_class
     weight_vector = np.random.rand(5, 1)
-    random.shuffle(data)
-    print(data)
+    np.take(data,np.random.permutation(data.shape[0]),axis=0,out=data)
+   # print(data[:,5])
     data_training = data[:100]
     data_testing = data[100:]
 
@@ -73,10 +69,6 @@ if __name__ == "__main__":
         for k in range(0,weight_vector[:,0].size):
             sumCalc = 0
             size_ = data_training[:,0].size
-            #for i in range(0,data_training[:,0].size):
-                #diff = np.subtract(data_training[i,5],data_training[i,6])
-                #feature = data_training[i,k]
-                #sumCalc += diff * feature
             diff = np.subtract(data_training[:,5],data_training[:,6])
             feature = data_training[:,k]
             sumCalc = np.sum(diff*feature)
@@ -86,6 +78,18 @@ if __name__ == "__main__":
         prevCost = cost
         iterations += 1
 
+    
+    mismatch_count = 0
+    (data_testing, weight_vector) = predict_classes(data_testing, weight_vector,False)
+    for i in range(0,data_testing[:,0].size):
+        if data_testing[i,5]-data_testing[i,6] != 0:
+            mismatch_count += 1
+
+    test_cost = np.sum(np.abs(data_testing[:,5]-data_testing[:,6]))
+    print("\n------- Now performing testing without step function----------")
+    print("Mismatch count is " + str(mismatch_count))
+    print("Test cost is " + str(test_cost))
+    
     mismatch_count = 0
     (data_testing, weight_vector) = predict_classes(data_testing, weight_vector,True)
     for i in range(0,data_testing[:,0].size):
@@ -93,6 +97,6 @@ if __name__ == "__main__":
             mismatch_count += 1
 
     test_cost = np.sum(np.abs(data_testing[:,5]-data_testing[:,6]))
-    print("\n------- Now performing testing ----------")
+    print("\n------- Now performing testing with step function----------")
     print("Mismatch count is " + str(mismatch_count))
     print("Test cost is " + str(test_cost))
