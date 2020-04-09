@@ -5,11 +5,9 @@ import random
 
 # GET Y-HAT
 def predict_classes(data, weight_vector,testing=False):
-    #for i in range(0, 75):
     transposed_weights = np.transpose(weight_vector)
     input_samples = data[:, : 5]
     input_samples = np.transpose(input_samples)
-    #input_samples[4] = 1.0
     pred_array = np.transpose(transposed_weights.dot(input_samples))
     if (testing):
         pred_array = [(1 if pred_array[i]<=1.5 else (2 if pred_array[i]>1.5 and pred_array[i]<=2.5 else 3)) for i in range(0,data[:,0].size)]
@@ -48,22 +46,18 @@ if __name__ == "__main__":
     data[:, 5] = flower_class
     weight_vector = np.random.rand(5, 1)
     np.take(data,np.random.permutation(data.shape[0]),axis=0,out=data)
-   # print(data[:,5])
     data_training = data[:100]
-    data_testing = data[100:]
+    data_testing = data[50:]
 
 
-    training_rate = 0.002
-    #print(data_training[:,0:4])
-    #weight_vector = weight_vector - training_rate * -1 * np.sum(data_training[:,5]-data_training[:,6]) * data_training[:,:5]
-
+    training_rate = 0.0001
     changes = True
     print("------- Performing training ----------")
     iterations = 0
     prevCost = 0
     while(iterations <= 1000 and changes is True):
         (data_training, weight_vector) = predict_classes(data_training, weight_vector)
-        cost = np.sum(np.abs(data_training[:,5]-data_training[:,6]))
+        cost = np.sum(np.square(data_training[:,5]-data_training[:,6]))
         if (cost - prevCost == 0):
             changes = False
         for k in range(0,weight_vector[:,0].size):
@@ -72,7 +66,7 @@ if __name__ == "__main__":
             diff = np.subtract(data_training[:,5],data_training[:,6])
             feature = data_training[:,k]
             sumCalc = np.sum(diff*feature)
-            weight_vector[k] = weight_vector[k] - (training_rate * -1/data_training[:,0].size * sumCalc)
+            weight_vector[k] = weight_vector[k] - (training_rate * -1 * sumCalc)
         if (iterations%100==0):
             print(cost)
         prevCost = cost
