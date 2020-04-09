@@ -16,6 +16,7 @@ def predict_classes(data, weight_vector,testing=False):
         data[:,6] = pred_array[:,0]
     return (data, weight_vector)
 
+
 # MAIN FUNCTION
 if __name__ == "__main__":
 
@@ -49,13 +50,14 @@ if __name__ == "__main__":
     data_training = data[:100]
     data_testing = data[50:]
 
-
     training_rate = 0.0001
+    
     changes = True
     print("------- Performing training ----------")
     iterations = 0
     prevCost = 0
     while(iterations <= 1000 and changes is True):
+
         (data_training, weight_vector) = predict_classes(data_training, weight_vector)
         cost = np.sum(np.square(data_training[:,5]-data_training[:,6]))
         if (cost - prevCost == 0):
@@ -85,11 +87,12 @@ if __name__ == "__main__":
     print("Test cost is " + str(test_cost))
     
     mismatch_count = 0
-    (data_testing, weight_vector) = predict_classes(data_testing, weight_vector,True)
-    for i in range(0,data_testing[:,0].size):
-        if data_testing[i,5]-data_testing[i,6] != 0:
+    (data_testing, weight_vector) = predict_classes(
+        data_testing, weight_vector, True)
+    for i in range(0, data_testing[:, 0].size):
+        if data_testing[i, 5]-data_testing[i, 6] != 0:
             mismatch_count += 1
-
+            
     test_cost = np.sum(np.abs(data_testing[:,5]-data_testing[:,6]))
     print("\n------- Now performing testing with step function----------")
     print("Mismatch count is " + str(mismatch_count))
